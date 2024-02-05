@@ -85,6 +85,7 @@ STANDARD_DICT = 'dict'
 STANDARD_LIST = 'list'
 STANDARD_SET = 'set'
 STR = 'str'
+OBJECT = 'object'
 
 NOT_REQUIRED = 'NotRequired'
 NOT_REQUIRED_PREFIX = f'{NOT_REQUIRED}['
@@ -281,6 +282,7 @@ class DataType(_BaseModel):
     children: List[Any] = []
     strict: bool = False
     dict_key: Optional['DataType'] = None
+    use_object_on_unknown_type: bool = False
 
     _exclude_fields: ClassVar[Set[str]] = {'parent', 'children'}
     _pass_fields: ClassVar[Set[str]] = {'parent', 'children', 'data_types', 'reference'}
@@ -507,7 +509,8 @@ class DataType(_BaseModel):
                 dict_ = DICT
             if self.dict_key or type_:
                 key = self.dict_key.type_hint if self.dict_key else STR
-                type_ = f'{dict_}[{key}, {type_ or ANY}]'
+                value = OBJECT if type_ == 'Any' and self.use_object_on_unknown_type else type_ or ANY
+                type_ = f'{dict_}[{key}, {value}]'
             else:  # pragma: no cover
                 type_ = dict_
         if self.is_optional and type_ != ANY:
@@ -577,6 +580,7 @@ class DataTypeManager(ABC):
         strict_types: Optional[Sequence[StrictTypes]] = None,
         use_non_positive_negative_number_constrained_types: bool = False,
         use_union_operator: bool = False,
+        use_object_on_unknown_type: bool = False
     ) -> None:
         self.python_version = python_version
         self.use_standard_collections: bool = use_standard_collections
@@ -604,6 +608,7 @@ class DataTypeManager(ABC):
                 use_standard_collections=(bool, use_standard_collections),
                 use_generic_container=(bool, use_generic_container_types),
                 use_union_operator=(bool, use_union_operator),
+                use_object_on_unknown_type=(bool, use_object_on_unknown_type),
                 __base__=DataType,
             )
 

@@ -682,6 +682,19 @@ def test_openapi_parser_parse_any():
         ).read_text()
     )
 
+def test_openapi_parser_use_use_object_on_unknown_type():
+    parser = OpenAPIParser(
+        data_model_field_type=DataModelFieldBase,
+        source=Path(DATA_PATH / 'any.yaml'),
+        use_object_on_unknown_type=True,
+    )
+    assert (
+        parser.parse()
+        == (
+            EXPECTED_OPEN_API_PATH / 'openapi_parser_parse_any' / 'output.py'
+        ).read_text()
+    )
+
 
 def test_openapi_parser_responses_without_content():
     parser = OpenAPIParser(

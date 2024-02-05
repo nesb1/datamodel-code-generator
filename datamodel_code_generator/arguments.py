@@ -250,6 +250,12 @@ typing_options.add_argument(
     action='store_true',
     default=None,
 )
+typing_options.add_argument(
+    '--use-object-on-unknown-type',
+    help='Use `object` annotation for unknown type instead of `typing.Any`',
+    action='store_true',
+    default=None,
+)
 
 # ======================================================================================
 # Customization options for generated model fields

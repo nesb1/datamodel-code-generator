@@ -6503,3 +6503,27 @@ def test_main_openapi_discriminator_enum():
                 EXPECTED_MAIN_PATH / 'main_openapi_discriminator_enum' / 'output.py'
             ).read_text()
         )
+
+
+@freeze_time('2019-07-26')
+def test_main_openapi_use_object_on_unknown_type():
+    with TemporaryDirectory() as output_dir:
+        output_file: Path = Path(output_dir) / 'output.py'
+        return_code: Exit = main(
+            [
+                '--input',
+                str(OPEN_API_DATA_PATH / 'any_object.yaml'),
+                '--output',
+                str(output_file),
+                '--use-object-on-unknown-type',
+                '--input-file-type',
+                'openapi',
+            ]
+        )
+        assert return_code == Exit.OK
+        assert (
+            output_file.read_text()
+            == (
+                EXPECTED_MAIN_PATH / 'main_use_object_on_unknown_type' / 'output.py'
+            ).read_text()
+        )

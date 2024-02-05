@@ -145,6 +145,7 @@ class DataTypeManager(_DataTypeManager):
         strict_types: Optional[Sequence[StrictTypes]] = None,
         use_non_positive_negative_number_constrained_types: bool = False,
         use_union_operator: bool = False,
+        use_object_on_unknown_type: bool = False
     ):
         super().__init__(
             python_version,
@@ -153,6 +154,7 @@ class DataTypeManager(_DataTypeManager):
             strict_types,
             use_non_positive_negative_number_constrained_types,
             use_union_operator,
+            use_object_on_unknown_type=use_object_on_unknown_type
         )
 
         self.type_map: Dict[Types, DataType] = self.type_map_factory(

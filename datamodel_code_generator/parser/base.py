@@ -390,6 +390,7 @@ class Parser(ABC):
         known_third_party: Optional[List[str]] = None,
         custom_formatters: Optional[List[str]] = None,
         custom_formatters_kwargs: Optional[Dict[str, Any]] = None,
+        use_object_on_unknown_type: bool = False,
     ) -> None:
         self.data_type_manager: DataTypeManager = data_type_manager_type(
             python_version=target_python_version,
@@ -397,6 +398,7 @@ class Parser(ABC):
             use_generic_container_types=use_generic_container_types,
             strict_types=strict_types,
             use_union_operator=use_union_operator,
+            use_object_on_unknown_type=use_object_on_unknown_type,
         )
         self.data_model_type: Type[DataModel] = data_model_type
         self.data_model_root_type: Type[DataModel] = data_model_root_type
@@ -508,6 +510,7 @@ class Parser(ABC):
         self.known_third_party = known_third_party
         self.custom_formatter = custom_formatters
         self.custom_formatters_kwargs = custom_formatters_kwargs
+        self.use_object_on_unknown_type = use_object_on_unknown_type
 
     @property
     def iter_source(self) -> Iterator[Source]:

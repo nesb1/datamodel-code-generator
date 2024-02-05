@@ -294,6 +294,7 @@ class Config(BaseModel):
     custom_file_header_path: Optional[Path] = None
     custom_formatters: Optional[List[str]] = None
     custom_formatters_kwargs: Optional[TextIOBase] = None
+    use_object_on_unknown_type: bool = False
 
     def merge_args(self, args: Namespace) -> None:
         set_args = {
@@ -488,6 +489,7 @@ def main(args: Optional[Sequence[str]] = None) -> Exit:
             custom_file_header_path=config.custom_file_header_path,
             custom_formatters=config.custom_formatters,
             custom_formatters_kwargs=custom_formatters_kwargs,
+            use_object_on_unknown_type=config.use_object_on_unknown_type,
         )
         return Exit.OK
     except InvalidClassNameError as e:
