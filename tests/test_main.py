@@ -6506,13 +6506,13 @@ def test_main_openapi_discriminator_enum():
 
 
 @freeze_time('2019-07-26')
-def test_main_openapi_use_object_on_unknown_type():
+def test_main_openapi_use_object_on_unknown_object_properties():
     with TemporaryDirectory() as output_dir:
         output_file: Path = Path(output_dir) / 'output.py'
         return_code: Exit = main(
             [
                 '--input',
-                str(OPEN_API_DATA_PATH / 'any_object.yaml'),
+                str(OPEN_API_DATA_PATH / 'object.yaml'),
                 '--output',
                 str(output_file),
                 '--use-object-on-unknown-type',
@@ -6524,6 +6524,33 @@ def test_main_openapi_use_object_on_unknown_type():
         assert (
             output_file.read_text()
             == (
-                EXPECTED_MAIN_PATH / 'main_use_object_on_unknown_type' / 'output.py'
+                EXPECTED_MAIN_PATH
+                / 'main_use_object_on_unknown_type'
+                / 'object_with_unknown_properties.py'
+            ).read_text()
+        )
+
+
+def test_main_openapi_use_object_on_unknown_type():
+    with TemporaryDirectory() as output_dir:
+        output_file: Path = Path(output_dir) / 'output.py'
+        return_code: Exit = main(
+            [
+                '--input',
+                str(OPEN_API_DATA_PATH / 'any.yaml'),
+                '--output',
+                str(output_file),
+                '--use-object-on-unknown-type',
+                '--input-file-type',
+                'openapi',
+            ]
+        )
+        assert return_code == Exit.OK
+        assert (
+            output_file.read_text()
+            == (
+                EXPECTED_MAIN_PATH
+                / 'main_use_object_on_unknown_type'
+                / 'object_when_not_type_stated.py'
             ).read_text()
         )

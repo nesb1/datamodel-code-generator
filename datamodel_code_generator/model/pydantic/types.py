@@ -52,6 +52,7 @@ def type_map_factory(
     data_type: Type[DataType],
     strict_types: Sequence[StrictTypes],
     pattern_key: str,
+    use_object_on_unknown_type: bool,
 ) -> Dict[Types, DataType]:
     data_type_int = data_type(type='int')
     data_type_float = data_type(type='float')
@@ -93,10 +94,14 @@ def type_map_factory(
         Types.ipv4_network: data_type.from_import(IMPORT_IPV4NETWORKS),
         Types.ipv6_network: data_type.from_import(IMPORT_IPV6NETWORKS),
         Types.boolean: data_type(type='bool'),
-        Types.object: data_type.from_import(IMPORT_ANY, is_dict=True),
+        Types.object: data_type.from_import(IMPORT_ANY, is_dict=True)
+        if not use_object_on_unknown_type
+        else data_type(type='object', is_dict=True),
         Types.null: data_type(type='None'),
         Types.array: data_type.from_import(IMPORT_ANY, is_list=True),
-        Types.any: data_type.from_import(IMPORT_ANY),
+        Types.any: data_type.from_import(IMPORT_ANY)
+        if not use_object_on_unknown_type
+        else data_type(type='object'),
     }
 
 
@@ -145,7 +150,7 @@ class DataTypeManager(_DataTypeManager):
         strict_types: Optional[Sequence[StrictTypes]] = None,
         use_non_positive_negative_number_constrained_types: bool = False,
         use_union_operator: bool = False,
-        use_object_on_unknown_type: bool = False
+        use_object_on_unknown_type: bool = False,
     ):
         super().__init__(
             python_version,
@@ -154,13 +159,14 @@ class DataTypeManager(_DataTypeManager):
             strict_types,
             use_non_positive_negative_number_constrained_types,
             use_union_operator,
-            use_object_on_unknown_type=use_object_on_unknown_type
+            use_object_on_unknown_type=use_object_on_unknown_type,
         )
 
         self.type_map: Dict[Types, DataType] = self.type_map_factory(
             self.data_type,
             strict_types=self.strict_types,
             pattern_key=self.PATTERN_KEY,
+            use_object_on_unknown_type=use_object_on_unknown_type,
         )
         self.strict_type_map: Dict[StrictTypes, DataType] = strict_type_map_factory(
             self.data_type,
@@ -184,8 +190,11 @@ class DataTypeManager(_DataTypeManager):
         data_type: Type[DataType],
         strict_types: Sequence[StrictTypes],
         pattern_key: str,
+        use_object_on_unknown_type: bool,
     ) -> Dict[Types, DataType]:
-        return type_map_factory(data_type, strict_types, pattern_key)
+        return type_map_factory(
+            data_type, strict_types, pattern_key, use_object_on_unknown_type
+        )
 
     def transform_kwargs(
         self, kwargs: Dict[str, Any], filter_: Set[str]

@@ -85,7 +85,7 @@ STANDARD_DICT = 'dict'
 STANDARD_LIST = 'list'
 STANDARD_SET = 'set'
 STR = 'str'
-OBJECT = 'object'
+OBJECT = "object"
 
 NOT_REQUIRED = 'NotRequired'
 NOT_REQUIRED_PREFIX = f'{NOT_REQUIRED}['
@@ -219,6 +219,10 @@ def get_optional_type(type_: str, use_union_operator: bool) -> str:
 
     if not type_ or type_ == NONE:
         return NONE
+
+    if type_ == OBJECT:
+        return OBJECT
+
     if use_union_operator:
         return f'{type_} | {NONE}'
     return f'{OPTIONAL_PREFIX}{type_}]'
@@ -509,8 +513,7 @@ class DataType(_BaseModel):
                 dict_ = DICT
             if self.dict_key or type_:
                 key = self.dict_key.type_hint if self.dict_key else STR
-                value = OBJECT if type_ == 'Any' and self.use_object_on_unknown_type else type_ or ANY
-                type_ = f'{dict_}[{key}, {value}]'
+                type_ = f'{dict_}[{key}, {type_ or ANY}]'
             else:  # pragma: no cover
                 type_ = dict_
         if self.is_optional and type_ != ANY:
@@ -580,7 +583,7 @@ class DataTypeManager(ABC):
         strict_types: Optional[Sequence[StrictTypes]] = None,
         use_non_positive_negative_number_constrained_types: bool = False,
         use_union_operator: bool = False,
-        use_object_on_unknown_type: bool = False
+        use_object_on_unknown_type: bool = False,
     ) -> None:
         self.python_version = python_version
         self.use_standard_collections: bool = use_standard_collections

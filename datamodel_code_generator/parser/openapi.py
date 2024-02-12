@@ -286,7 +286,7 @@ class OpenAPIParser(JsonSchemaParser):
             known_third_party=known_third_party,
             custom_formatters=custom_formatters,
             custom_formatters_kwargs=custom_formatters_kwargs,
-            use_object_on_unknown_type=use_object_on_unknown_type
+            use_object_on_unknown_type=use_object_on_unknown_type,
         )
         self.open_api_scopes: List[OpenAPIScope] = openapi_scopes or [
             OpenAPIScope.Schemas
